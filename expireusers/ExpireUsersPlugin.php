@@ -9,7 +9,7 @@ class ExpireUsersPlugin extends BasePlugin {
     }
 
     public function getVersion() {
-        return '0.1';
+        return '0.1.1';
     }
 
     public function getDeveloper() {
@@ -48,29 +48,33 @@ class ExpireUsersPlugin extends BasePlugin {
     private function _setupEditHooks() {
         // Initial hook to check status, this is required when actively modifying expiry date on the edit page
         craft()->templates->hook('cp.users.edit', function(&$context) {
-            $expired = craft()->expireUsers_userExpiry->shouldBeExpired($context["userId"]);
-            if ($expired) {
-                $user = craft()->users->getUserById($context["userId"]);
-                if ($user->getStatus() !== UserStatus::Suspended) {
-                    craft()->users->suspendUser($user);
+            if ((int) $context["account"]->admin === 0) {
+                $expired = craft()->expireUsers_userExpiry->shouldBeExpired($context["account"]->id);
+                if ($expired) {
+                    $user = craft()->users->getUserById($context["account"]->id);
+                    if ($user->getStatus() !== UserStatus::Suspended) {
+                        craft()->users->suspendUser($user);
 
-                    craft()->userSession->setNotice(null);
-                    craft()->userSession->setError(Craft::t('Please change expiry date before unsuspending user.'));
+                        craft()->userSession->setNotice(null);
+                        craft()->userSession->setError(Craft::t('Please change expiry date before unsuspending user.'));
 
-                    $context['statusLabel'] = Craft::t('Suspended');
-                    $statusActions = array();
-                    if (craft()->userSession->checkPermission('administrateUsers')) {
-                        $statusActions[] = array('action' => 'users/unsuspendUser', 'label' => Craft::t('Unsuspend'));
+                        $context['statusLabel'] = Craft::t('Suspended');
+                        $statusActions = array();
+                        if (craft()->userSession->checkPermission('administrateUsers')) {
+                            $statusActions[] = array('action' => 'users/unsuspendUser', 'label' => Craft::t('Unsuspend'));
+                        }
+                        $context['actions'][0] = $statusActions;
                     }
-                    $context['actions'][0] = $statusActions;
                 }
             }
         });
 
         // render the expiry date pane
         craft()->templates->hook('cp.users.edit.right-pane', function(&$context) {
-            $expiryDate = craft()->expireUsers_userExpiry->getUserExpiryDate($context["userId"]);
-            return craft()->templates->render("expireUsers/_includes/expirePane", array_merge($context, array('expiryDate' => $expiryDate)));
+            if ((int) $context["account"]->admin === 0) {
+                $expiryDate = craft()->expireUsers_userExpiry->getUserExpiryDate($context["account"]->id);
+                return craft()->templates->render("expireUsers/_includes/expirePane", array_merge($context, array('expiryDate' => $expiryDate)));
+            }
         });
     }
 

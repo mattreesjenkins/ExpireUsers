@@ -13,12 +13,12 @@
         <div class="field">
             <div>
                 <input type="button" class="btn  formsubmit" value="{{ 'Update Expiry'|t }}" data-action="expireUsers/userExpiry/updateExpiry"
-                       data-redirect="users/{{userId}}"
+                       data-redirect="users/{{account.id}}"
                        data-confirm="{{ 'Are you sure you want to update the expiry date?'|t }}">
             </div>
             <div>
                 <input type="button" class="btn  formsubmit" value="{{ 'Clear Expiry'|t }}" data-action="expireUsers/userExpiry/clearExpiry"
-                       data-redirect="users/{{userId}}"
+                       data-redirect="users/{{account.id}}"
                        data-confirm="{{ 'Are you sure you want to clear the expiry date?'|t }}">
             </div>
         </div>
