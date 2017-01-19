@@ -1,5 +1,5 @@
 # Expire Users
-This plugin allows you to add an expiry date to users in Craft CMS.
+This plugin allows you to add an expiry date to non-admin users in Craft CMS.
 A user attempting to login past the expiry date will have their account status set to suspended and refused login.
 
 
