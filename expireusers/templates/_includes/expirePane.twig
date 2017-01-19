@@ -1,0 +1,34 @@
+{% import "_includes/forms" as forms %}
+<form class="pane lightpane meta" method="post" accept-charset="UTF-8">
+    {{ hiddenInputs }}
+
+    <div id="settings" class="pane meta">
+        {{ forms.dateTimeField({
+                label: "Expiry Date"|t,
+                id: 'expiryDate',
+                name: 'expiryDate',
+                value: (expiryDate ? expiryDate : null),
+        }) }}
+
+        <div class="field">
+            <div>
+                <input type="button" class="btn  formsubmit" value="{{ 'Update Expiry'|t }}" data-action="expireUsers/userExpiry/updateExpiry"
+                       data-redirect="users/{{userId}}"
+                       data-confirm="{{ 'Are you sure you want to update the expiry date?'|t }}">
+            </div>
+            <div>
+                <input type="button" class="btn  formsubmit" value="{{ 'Clear Expiry'|t }}" data-action="expireUsers/userExpiry/clearExpiry"
+                       data-redirect="users/{{userId}}"
+                       data-confirm="{{ 'Are you sure you want to clear the expiry date?'|t }}">
+            </div>
+        </div>
+        {#{ forms.dateTimeField({
+                label: "Expiry Date"|t,
+                id: 'expiryDate',
+                name: 'expiryDate',
+                value: (entry.expiryDate ? entry.expiryDate : null),
+                errors: entry.getErrors('expiryDate'),
+                disabled: isVersion
+        }) }#}
+    </div>
+</form>
