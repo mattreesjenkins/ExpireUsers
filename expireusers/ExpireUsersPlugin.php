@@ -21,13 +21,14 @@ class ExpireUsersPlugin extends BasePlugin {
     }
 
     public function init() {
-
-        $this->_setupEditEvent();
+        $this->_setupEvents();
         $this->_setupEditHooks();
     }
 
-    private function _setupEditEvent() {
-        // EVENTS
+    /**
+     * Listen for login events, intercept and check if the login is expired
+     */
+    private function _setupEvents() {
         craft()->on('userSession.onBeforeLogin', function(Event $event) {
             $user = craft()->users->getUserByUsernameOrEmail($event->params['username']);
             $expired = craft()->expireUsers_userExpiry->shouldBeExpired($user->id);
@@ -41,8 +42,11 @@ class ExpireUsersPlugin extends BasePlugin {
         });
     }
 
+    /**
+     * Sets up the required hooks for the user's edit page
+     */
     private function _setupEditHooks() {
-        // HOOKS
+        // Initial hook to check status, this is required when actively modifying expiry date on the edit page
         craft()->templates->hook('cp.users.edit', function(&$context) {
             $expired = craft()->expireUsers_userExpiry->shouldBeExpired($context["userId"]);
             if ($expired) {
